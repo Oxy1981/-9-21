@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BubbleTea &amp; Burgers: реляційні БД, dat.A</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#fbf7f2;--card:#fff;--tx:#2b2230;--mu:#6b6073;--ac:#c2410c;--ac2:#7c3aed;--ok:#15803d;--bad:#b91c1c;--bd:#e7ddd2;--soft:#f6ece1}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#1b1620;--card:#262030;--tx:#f1eaf5;--mu:#b3a7bd;--ac:#fb923c;--ac2:#a78bfa;--ok:#4ade80;--bad:#f87171;--bd:#3b3347;--soft:#2f2839}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#1b1620;--card:#262030;--tx:#f1eaf5;--mu:#b3a7bd;--ac:#fb923c;--ac2:#a78bfa;--ok:#4ade80;--bad:#f87171;--bd:#3b3347;--soft:#2f2839}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.w{max-width:860px;margin:0 auto;padding:16px}
+h1{font-size:1.45rem;margin:.2em 0}h2{font-size:1.2rem;margin:.2em 0 .6em}h3{font-size:1.02rem;margin:.9em 0 .3em}
+.sub{color:var(--mu);margin:0 0 12px}
+nav{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 16px}
+nav button{flex:1;min-width:110px;padding:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
+nav button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:14px}
+.tag{display:inline-block;background:var(--soft);border-radius:99px;padding:2px 10px;font-size:.8rem;color:var(--mu);margin-right:4px}
+.sec{display:none}.sec.on{display:block}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{border:1px solid var(--bd);padding:7px 9px;text-align:left}
+th{background:var(--soft)}
+.clk th,.clk tr{cursor:pointer}.clk th:hover,.clk tbody tr:hover td{background:var(--soft)}
+.g{background:rgba(21,128,61,.18)!important}.r{background:rgba(185,28,28,.18)!important}
+button.b{padding:9px 16px;border:0;border-radius:10px;background:var(--ac2);color:#fff;font:inherit;font-weight:600;cursor:pointer}
+button.b:disabled{opacity:.45;cursor:default}
+select,input[type=text]{font:inherit;padding:6px 8px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);max-width:100%}
+.row{display:flex;gap:8px;align-items:center;margin:7px 0;flex-wrap:wrap}.row>span{flex:1;min-width:180px}
+.tg button{padding:5px 12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:8px;font:inherit;cursor:pointer}
+.tg button.on{background:var(--ac2);color:#fff;border-color:var(--ac2)}
+.fb{margin-top:8px;font-weight:600}.ok{color:var(--ok)}.no{color:var(--bad)}
+.pts{float:right;font-weight:700;color:var(--ac)}
+.q{margin-bottom:16px}.q label{display:block;padding:7px 10px;margin:4px 0;border:1px solid var(--bd);border-radius:9px;cursor:pointer}
+.q label.g,.q label.r{font-weight:600}
+.big{font-size:2rem;font-weight:800;color:var(--ac)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.box{background:var(--soft);border-radius:12px;padding:12px}
+.note{font-size:.88rem;color:var(--mu)}
+li{margin:3px 0}
+</style>
+</head>
+<body>
+<div class="w">
+<h1>🧋🍔 BubbleTea &amp; Burgers</h1>
+<p class="sub">9 клас · Реляційні бази даних та СКБД · веб-середовище dat.A · IndexedDB і формат .DTA</p>
+<nav id="nav">
+<button data-t="th" class="on">1. Теорія</button>
+<button data-t="tr">2. Тренажер</button>
+<button data-t="ts">3. Експрес-тест</button>
+<button data-t="gr">4. Оцінка</button>
+</nav>
+
+<!-- ТЕОРІЯ -->
+<section id="th" class="sec on">
+<div class="card"><h2>Навіщо кав’ярні база даних?</h2>
+<p>У закладі «BubbleTea &amp; Burgers» щодня сотні чеків, десятки напоїв і бургерів. В одному текстовому файлі чи гігантській таблиці ціни плутаються, дані дублюються, а виручку важко порахувати. Тому використовують <b>бази даних</b>.</p></div>
+
+<div class="card"><h2>Реляційна модель даних</h2>
+<p><b>База даних (БД)</b> — упорядкована сукупність даних про певну предметну область (у нас — робота закладу).</p>
+<p><b>Реляційна модель</b> (від англ. <i>relation</i> — відношення) — дані подано у вигляді двовимірних <b>пов’язаних</b> таблиць.</p>
+<div class="tw"><table><thead><tr><th>ID</th><th>Назва_позиції</th><th>Категорія</th><th>Ціна_грн</th><th>Калорійність</th></tr></thead>
+<tbody><tr><td>1</td><td>Бабл-ті Матча-Полуниця</td><td>Напої</td><td>115</td><td>320</td></tr>
+<tr><td>2</td><td>Чизбургер Подвійний</td><td>Бургери</td><td>165</td><td>620</td></tr></tbody></table></div>
+<ul>
+<li><b>Таблиця</b> — однотипні об’єкти (Меню, Замовлення).</li>
+<li><b>Поле</b> (стовпець) — властивість об’єкта: Назва_позиції, Ціна_грн…</li>
+<li><b>Запис</b> (рядок) — один конкретний об’єкт.</li>
+<li><b>Ключове поле (первинний ключ)</b> — унікальне поле (часто лічильник ID), яке однозначно визначає запис і дозволяє зв’язувати таблиці без дублювання тексту.</li></ul>
+<p><b>СКБД</b> (система керування базами даних) — програмне забезпечення для створення структури БД, додавання, оновлення, пошуку, видалення та захисту даних. Приклади: MS Access, SQLite, MySQL, PostgreSQL, навчальне середовище <b>dat.A</b>.</p></div>
+
+<div class="card"><h2>Веб-середовище dat.A</h2>
+<p>Онлайновий застосунок на основі <b>SQL.js</b> (рушій SQLite у браузері). Нічого не потрібно встановлювати.</p>
+<ul><li><b>Рядок меню:</b> Файл, Створити, Дані, Таблиці, Запити, Звіти, Форми, Допомога.</li>
+<li><b>Рядок заголовка:</b> назва відкритої БД і логотип.</li>
+<li><b>Робоча область:</b> таблиці, запити, форми, звіти.</li>
+<li><b>Спрощене меню:</b> кнопка в куті екрана для смартфона чи планшета.</li></ul></div>
+
+<div class="card"><h2>Де зберігаються дані</h2>
+<div class="grid">
+<div class="box"><h3 style="margin-top:0">IndexedDB</h3><p>Сховище самого браузера на цьому пристрої. Зміни зберігаються туди автоматично. На іншому комп’ютері або після очищення кешу й даних браузера бази не буде.</p></div>
+<div class="box"><h3 style="margin-top:0">Файл .DTA</h3><p>Власний формат dat.A: ZIP-архів з JSON-описом структури та двійковим дампом SQLite. Для резервної копії, перенесення на флешку чи Google Диск, надсилання вчителю.</p></div></div></div>
+
+<div class="card"><h2>Практична робота в dat.A</h2>
+<ol>
+<li><b>Файл → Нова база даних</b> (або Створити → База даних).</li>
+<li>Назва латиницею: <code>BubbleTea_Burgers_Kovalenko</code> (своє прізвище). Натисни <b>Зберегти</b>.</li>
+<li><b>Файл → Відомості</b>: подивись ідентифікатор і розмір у байтах.</li>
+<li><b>Файл → Сховище</b>: переконайся, що база є у списку IndexedDB.</li>
+<li><b>Файл → Зберегти як .DTA</b>: файл з’явиться в «Завантаженнях».</li>
+<li><b>Файл → Закрити</b>, потім <b>Файл → Відкрити з .DTA</b> — перевір відновлення.</li></ol></div>
+<button class="b" onclick="go('tr')">До тренажера →</button>
+</section>
+
+<!-- ТРЕНАЖЕР -->
+<section id="tr" class="sec">
+<div class="card"><h2>Тренажер <span class="pts" id="trT">0 / 4</span></h2>
+<p class="sub">4 завдання по 1 балу. Бали за завдання зараховуються після першої перевірки.</p></div>
+
+<div class="card"><h3 style="margin-top:0">Завдання 1. Таблиця «Меню» <span class="pts" id="p1"></span></h3>
+<p id="q1" style="font-weight:600"></p>
+<div class="tw"><table class="clk" id="t1"><thead><tr><th data-k="f:ID">ID</th><th data-k="f:Назва">Назва_позиції</th><th data-k="f:Кат">Категорія</th><th data-k="f:Ціна">Ціна_грн</th><th data-k="f:Кал">Калорійність</th></tr></thead>
+<tbody><tr data-k="r:1"><td>1</td><td>Бабл-ті Класичний Таро</td><td>Напої</td><td>110</td><td>340</td></tr>
+<tr data-k="r:2"><td>2</td><td>Чизбургер Подвійний</td><td>Бургери</td><td>165</td><td>620</td></tr>
+<tr data-k="r:3"><td>3</td><td>Чізкейк Нью-Йорк</td><td>Десерти</td><td>95</td><td>410</td></tr></tbody></table></div>
+<div class="fb" id="f1"></div></div>
+
+<div class="card"><h3 style="margin-top:0">Завдання 2. Порядок дій у dat.A <span class="pts" id="p2"></span></h3>
+<p>Проставте номер кроку (1–5) для створення БД і резервної копії.</p>
+<div id="o2"></div><button class="b" id="c2" onclick="chk2()">Перевірити</button><div class="fb" id="f2"></div></div>
+
+<div class="card"><h3 style="margin-top:0">Завдання 3. IndexedDB чи .DTA? <span class="pts" id="p3"></span></h3>
+<div id="o3"></div><button class="b" id="c3" onclick="chk3()">Перевірити</button><div class="fb" id="f3"></div></div>
+
+<div class="card"><h3 style="margin-top:0">Завдання 4. Терміни та означення <span class="pts" id="p4"></span></h3>
+<div id="o4"></div><button class="b" id="c4" onclick="chk4()">Перевірити</button><div class="fb" id="f4"></div></div>
+<button class="b" onclick="go('ts')">До експрес-тесту →</button>
+</section>
+
+<!-- ТЕСТ -->
+<section id="ts" class="sec">
+<div class="card"><h2>Експрес-тест <span class="pts" id="tsT">0 / 4</span></h2>
+<p class="sub">8 запитань по 0,5 бала. Одна правильна відповідь. Після завершення відповіді змінити не можна.</p></div>
+<div id="qs"></div>
+<button class="b" id="cT" onclick="chkT()">Завершити тест</button>
+<div class="fb" id="fT"></div>
+</section>
+
+<!-- ОЦІНКА -->
+<section id="gr" class="sec">
+<div class="card"><h2>Оцінка за урок</h2>
+<div class="row"><span>Прізвище та ім’я:</span><input type="text" id="nm" placeholder="Наприклад: Коваленко Олена" style="flex:2"></div>
+<div class="grid" style="margin-top:10px">
+<div class="box">Тренажер<div class="big" id="gT">0</div><div class="note">з 4 балів</div></div>
+<div class="box">Експрес-тест<div class="big" id="gS">0</div><div class="note">з 4 балів</div></div>
+<div class="box">Тренажер + тест<div class="big" id="gA">0</div><div class="note">з 8 балів (без переведення в 12-бальну шкалу)</div></div></div></div>
+
+<div class="card"><h2>Підсумок</h2>
+<p>Тренажер і тест: <b id="sA">0</b> / 8 балів. Учень: <span id="sNm">—</span>.</p>
+<div class="box"><b>Щоб отримати максимальний бал за урок (12 балів)</b>, потрібно створити базу даних у dat.A за покроковою інструкцією в Google Класі.</div></div>
+</section>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const S={tr:[null,null,null,null],ts:null};
+const r1=n=>Math.round(n*10)/10;
+const fmt=n=>String(r1(n)).replace(".",",");
+function go(t){document.querySelectorAll(".sec").forEach(s=>s.classList.toggle("on",s.id===t));
+document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
+if(t==="gr")upd();window.scrollTo(0,0)}
+document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>go(b.dataset.t));
+
+function setTr(i,v,msg,ok){S.tr[i]=v;$("p"+(i+1)).textContent=fmt(v)+" / 1";
+const f=$("f"+(i+1));f.textContent=msg;f.className="fb "+(ok?"ok":"no");
+const c=$("c"+(i+1));if(c)c.disabled=true;
+$("trT").textContent=fmt(S.tr.reduce((a,b)=>a+(b||0),0))+" / 4"}
+
+/* Завдання 1 */
+const P1=[["Клікни на ключове поле таблиці (заголовок стовпця).","f:ID"],["Клікни на запис про «Чизбургер Подвійний» (рядок).","r:2"],["Клікни на поле, де зберігається калорійність.","f:Кал"]];
+let i1=0,ok1=0;
+function show1(){$("q1").textContent=i1<3?`Крок ${i1+1} з 3: `+P1[i1][0]:"Готово!"}
+show1();
+document.querySelectorAll("#t1 [data-k]").forEach(e=>e.onclick=()=>{
+if(i1>=3)return;const good=e.dataset.k===P1[i1][1];
+if(good)ok1++;
+const cells=e.tagName==="TR"?e.querySelectorAll("td"):[e];
+cells.forEach(c=>c.classList.add(good?"g":"r"));
+i1++;show1();
+if(i1===3)setTr(0,ok1/3,`Правильно: ${ok1} з 3.`,ok1===3)});
+
+/* Завдання 2 */
+const ST=["Файл → Зберегти як .DTA","Файл → Нова база даних","Ввести назву латиницею та натиснути «Зберегти»","Файл → Сховище: перевірити наявність бази","Файл → Відомості: переглянути розмір бази"];
+const ORD=[4,1,2,5,3]; // правильні номери для ST
+// кроки: 1 нова БД, 2 назва, 3 відомості, 4 сховище, 5 .DTA
+const COR=[5,1,2,4,3];
+$("o2").innerHTML=ST.map((s,i)=>`<div class="row"><select id="s2_${i}"><option value="">—</option>${[1,2,3,4,5].map(n=>`<option>${n}</option>`).join("")}</select><span>${s}</span></div>`).join("");
+function chk2(){let g=0;ST.forEach((_,i)=>{const v=+$("s2_"+i).value;const e=$("s2_"+i);e.className=v===COR[i]?"g":"r";if(v===COR[i])g++});
+setTr(1,g/5,`Правильно: ${g} з 5. Порядок: Нова БД → назва й збереження → Відомості → Сховище → Зберегти як .DTA.`,g===5)}
+
+/* Завдання 3 */
+const A3=[["Зберігає зміни автоматично між сеансами",0],["Це ZIP-архів з JSON-описом і дампом SQLite",1],["Підходить для надсилання бази вчителю",1],["Втрачається після очищення кешу й даних браузера",0],["Доступне лише в браузері конкретного пристрою",0],["Можна завантажити на Google Диск чи флешку",1]];
+const v3=Array(6).fill(null);
+$("o3").innerHTML=A3.map((a,i)=>`<div class="row"><span>${a[0]}</span><span class="tg"><button data-i="${i}" data-v="0">IndexedDB</button> <button data-i="${i}" data-v="1">.DTA</button></span></div>`).join("");
+document.querySelectorAll("#o3 .tg button").forEach(b=>b.onclick=()=>{if($("c3").disabled)return;v3[b.dataset.i]=+b.dataset.v;
+b.parentNode.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b))});
+function chk3(){if(v3.includes(null)){$("f3").textContent="Дай відповідь у кожному рядку.";$("f3").className="fb no";return}
+let g=0;A3.forEach((a,i)=>{const row=$("o3").children[i];const good=v3[i]===a[1];if(good)g++;row.classList.add(good?"g":"r")});
+setTr(2,g/6,`Правильно: ${g} з 6.`,g===6)}
+
+/* Завдання 4 */
+const T4=[["База даних","Впорядкована сукупність даних про предметну область"],["СКБД","Програма для створення, пошуку, оновлення й захисту даних"],["Поле","Стовпець таблиці — властивість об’єкта"],["Запис","Рядок таблиці — один конкретний об’єкт"],["Первинний ключ","Унікальне поле, що однозначно ідентифікує запис"]];
+const sh=[3,0,4,1,2];
+$("o4").innerHTML=T4.map((t,i)=>`<div class="row"><b style="min-width:130px">${t[0]}</b><select id="s4_${i}" style="flex:1"><option value="">— обери означення —</option>${sh.map(k=>`<option value="${k}">${T4[k][1]}</option>`).join("")}</select></div>`).join("");
+function chk4(){let g=0;T4.forEach((_,i)=>{const e=$("s4_"+i);const ok=e.value!==""&&+e.value===i;e.className=ok?"g":"r";if(ok)g++});
+setTr(3,g/5,`Правильно: ${g} з 5.`,g===5)}
+
+/* Тест */
+const Q=[
+["Що таке реляційна база даних?",["Один великий текстовий документ","Дані у вигляді двовимірних пов’язаних таблиць","Набір малюнків і відео","Лише програма для ведення чеків"],1],
+["Що таке СКБД?",["Програмне забезпечення для створення, оновлення, пошуку й захисту даних","Окремий рядок таблиці","Назва файлу бази даних","Тип комп’ютера-сервера"],0],
+["Рядок «Чизбургер Подвійний | Бургери | 165 | 620» у таблиці Меню — це…",["поле","первинний ключ","запис","СКБД"],2],
+["Для чого потрібне ключове поле (первинний ключ)?",["Щоб прикрасити таблицю","Щоб однозначно ідентифікувати кожен запис","Щоб стиснути базу в архів","Щоб змінити ціни на меню"],1],
+["На якій технології працює dat.A?",["SQL.js (рушій SQLite у браузері)","Лише MS Access, встановлений на ПК","Редактор презентацій","Мобільний месенджер"],0],
+["Де dat.A автоматично зберігає зміни бази між сеансами?",["У хмарі Google Диск","У браузерному сховищі IndexedDB","У папці «Документи» без жодних дій","Лише в оперативній пам’яті"],1],
+["Що станеться з базою в IndexedDB, якщо очистити кеш і дані браузера?",["Нічого, вона збережеться назавжди","Її буде автоматично надіслано вчителю","Вона стане недоступною (можна відновити з .dta)","Вона перетвориться на таблицю Excel"],2],
+["Що таке формат .DTA?",["ZIP-архів з JSON-описом структури та дампом SQLite","Формат лише для зображень","Скорочена назва СКБД","Тимчасовий файл для кешу браузера"],0]];
+$("qs").innerHTML=Q.map((q,i)=>`<div class="card q" id="q${i}"><b>${i+1}. ${q[0]}</b>${q[1].map((o,j)=>`<label><input type="radio" name="t${i}" value="${j}"> ${o}</label>`).join("")}</div>`).join("");
+function chkT(){if(S.ts!==null)return;
+const un=Q.findIndex((_,i)=>!document.querySelector(`input[name=t${i}]:checked`));
+if(un>=0){$("fT").textContent=`Відповідь на запитання ${un+1} ще не обрано.`;$("fT").className="fb no";return}
+let g=0;Q.forEach((q,i)=>{const sel=+document.querySelector(`input[name=t${i}]:checked`).value;
+const ls=document.querySelectorAll(`#q${i} label`);ls[q[2]].classList.add("g");
+if(sel===q[2])g++;else ls[sel].classList.add("r");
+document.querySelectorAll(`input[name=t${i}]`).forEach(x=>x.disabled=true)});
+S.ts=g*0.5;$("tsT").textContent=fmt(S.ts)+" / 4";$("cT").disabled=true;
+$("fT").textContent=`Правильних відповідей: ${g} з 8 → ${fmt(S.ts)} бала(ів) з 4.`;$("fT").className="fb "+(g>=6?"ok":"no")}
+
+/* Оцінка */
+function upd(){const t=S.tr.reduce((a,b)=>a+(b||0),0),s=S.ts||0;
+$("gT").textContent=fmt(t);$("gS").textContent=fmt(s);$("gA").textContent=fmt(t+s);
+$("sA").textContent=fmt(t+s);$("sNm").textContent=$("nm").value.trim()||"—"}
+$("nm").oninput=upd;
+</script>
+</body>
+</html>
